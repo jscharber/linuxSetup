@@ -1,0 +1,19 @@
+set nocompatible
+
+call plug#begin('~/.vim/plugged')
+
+Plug 'airblade/vim-gitgutter'
+Plug 'ervandew/supertab'
+Plug 'fatih/vim-go'
+Plug 'itchyny/lightline.vim'
+Plug 'junegunn/fzf.vim'
+Plug 'majutsushi/tagbar'
+Plug 'scrooloose/nerdtree'
+Plug 'SirVer/ultisnips'
+Plug 'tpope/vim-fugitive'
+Plug 'wincent/ferret'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+
+call plug#end()
+
+" vim: filetype=vim

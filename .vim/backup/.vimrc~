@@ -1,0 +1,321 @@
+if v:progname =~? "evim"
+  finish
+endif
+
+set spell spelllang=en
+
+" Get the defaults that most users want.
+source $VIMRUNTIME/defaults.vim
+
+if &t_Co > 2 || has("gui_running")
+  " Switch on highlighting the last used search pattern.
+  set hlsearch
+endif
+
+" Put these in an autocmd group, so that we can delete them easily.
+augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+augroup END
+
+" Add optional packages.
+"
+" The matchit plugin makes the % command work better, but it is not backwards
+" compatible.
+" The ! means the package won't be loaded right away but when plugins are
+" loaded during initialization.
+if has('syntax') && has('eval')
+  packadd! matchit
+endif
+source $HOME/.pr_vimrc_plug
+source $HOME/.pr_vimrc_init
+
+redir! > ~/.vim/tmp/vim.log
+silent echom expand("%")
+
+set nocompatible
+
+filetype plugin indent on
+syntax on
+
+" read modelines in edited files
+set modeline
+set modelines=2
+
+set tags=./tags;/
+"set tags+=tags;$HOME
+
+set noexpandtab
+set autoindent
+set tabstop=2
+set shiftwidth=2
+
+set termsize="3x0"
+
+set autoindent
+set backspace=start,indent
+"k=dictionary, s=thesaurus, t=tags, i=current/include files
+set complete+=k
+set complete+=s
+:set complete-=i
+set completeopt+=menuone
+set dictionary+=/usr/share/dict/american-english
+set directory=~/.vim/tmp
+set expandtab
+set hidden
+set history=1000
+set magic
+
+" set laststatus=2
+set scrolloff=3
+
+" start as login shell to get aliases etc in zsh
+" set shellcmdflag+=l
+set showcmd
+set thesaurus+=~/.vim/dict/thesaurus.txt
+set viminfo+=n~/.vim/viminfo
+set visualbell
+set wildmenu
+" set wildmode=longest,list:full
+set wildmode=list:longest,full
+" set wildmode=longest:full,full
+" set wildmode=longest,list
+" set wildmode=longest:full
+
+set virtualedit=block
+set mousemodel=extend
+" right mouse double click starts/ends visual block
+nnoremap <rightmouse> <leftmouse><c-v>
+
+set wildignore+=*.a,*.o,*.so,*.dylib,*.pyc,*.out
+set wildignore+=*.jpg,*.jpeg,*.png,*.bmp,*.tif,*.tiff
+set wildignore+=*.aiff,*.gsm,*.mp3,*.opus,*.raw,*.wav
+set wildignore+=*.gif,*.avi,*.mov,*.mp3,*.yuv,*.flv
+set wildignore+=*.bin,*.dat,*.img
+set wildignore+=*.dmg,*.pkg,*.deb,*.rpm,*.iso,*.zip
+set wildignore+=*.tar,*.tgz,*.tbz,*tbz2,*.taz
+set wildignore+=*.gz,*.bz,*.bz2,*.z,*.Z
+set wildignore+=*.swp
+set wildignore+=*.save,*.ig.*
+
+let mapleader = "\\"
+let maplocalleader = "\\"
+" default fpr comment functions
+let b:comment_leader = '#'
+
+set writebackup
+set backup
+set backupdir=~/.vim/backup
+
+"" go-vim
+"" Start of vim configuration for using go-vim
+"" and sister plugins
+""
+" write file before :make, :GoBuild, :GoTest|Func, :GoRun 
+set autowrite
+
+"" go-vim creates fix lists based on programs such as lint
+"" or errors from builds
+"" This setups list types and shortcuts
+"
+"" Make all lists types quick fix so there is one method for
+"" navigation
+"let g:go_list_type = "quickfix"
+"
+"" Use CTRL-U for next and CTRL-I for previous
+"" CTRL-O to close
+"map <C-u> :cnext<CR>
+"map <C-i> :cprevious<CR>
+"map <C-o> :cclose<CR>
+"
+"" use \r to execut :GoRun
+autocmd FileType go nmap <leader>r  <Plug>(go-run)
+
+" run :GoBuild or :GoTestCompile based on the go file
+" assumes func.go vs func_test.go
+"
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+
+" When \b is selected execut build_go function
+autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
+
+"" When \c is entered, call :GoCoverageToggle
+"" assumes func.go vs func_test.go
+autocmd FileType go nmap <leader>c <Plug>(go-coverage-toggle)
+
+"" By default go-vim uses gofmt when saving files
+"" This tells it to use goimports for extended checking
+"" of imported packages
+let g:go_fmt_command = "goimports"
+
+"" Uncomment if you don't want fix list shown when 
+"" goimports fails
+"" let g:go_fmt_fail_silently = 1
+"
+"" When using vim normal mode selection commands
+"" af All of fucntion
+"" consider comments above function as part of the
+"" function
+"let g:go_textobj_include_function_doc = 1
+"
+"" highlighting
+""
+"let g:go_highlight_types = 1
+"let g:go_highlight_fields = 1
+"let g:go_highlight_functions = 1
+"let g:go_highlight_function_calls = 1
+"let g:go_highlight_operators = 1
+"let g:go_highlight_extra_types = 1
+"let g:go_highlight_build_constraints = 1
+"let g:go_highlight_generate_tags = 1
+"
+" color scheme
+let g:rehash256 = 1
+let g:molokai_original = 1
+colorscheme molokai
+
+" linting
+"
+" Note: golangci-lint is what is used under the hood
+"       may want to see if there are other options we
+"       should be using
+"
+" uncomment if you want to limit linting on autosave
+" let g:go_metalinter_autosave_enabled = ['vet', 'golint']
+let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck', 'gosec']
+
+" execut GometaLinter on save
+" TODO: Disabling for now seems painful when I use it
+" let g:go_metalinter_autosave = 1
+
+" Uncomment to set a deadline for lints to complete
+" let g:go_metalinter_deadline = "5s"
+
+"" window handling for alternates
+"" :A :AV :AS :AT
+"autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
+"autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
+"autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
+"autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
+"
+"" GoInfo leader mapping
+"autocmd FileType go nmap <Leader>i <Plug>(go-info)
+"
+"" Automatically show :GoInfo for the word under
+"" the cursor.  Disable if you find it to slow
+let g:go_auto_type_info = 1
+"
+"" Sets vim status bar refresh rate
+"" Reducing it from default of 800 to 100ms
+set updatetime=100
+
+"" Highlight all instances of indentifer under the cursor
+"" TODO: Not sure I like this one
+"let g:go_auto_sameids = 1
+
+" Other leader short cuts taken from go-vim cheat sheet
+" https://gist.github.com/krlvi/d22bdcb66566261ea8e8da36f796fa0a
+"
+
+""q Show how function is reached :GoCallstack
+"autocmd FileType go nmap <leader>q <Plug>(go-callstack)
+"
+""w Alternwate window splits
+nnoremap <leader>w <C-w>w
+
+"e Generate error handling :GoIfErr
+autocmd FileType go nmap <leader>e <Plug>(go-iferr)
+
+"r Rename :GoRename[!] [to]
+autocmd FileType go nmap <leader>r <Plug>(go-rename)
+
+"t Test function :GoTestFunc[!] [expand]
+autocmd FileType go nmap <leader>t <Plug>(go-test-func)
+
+"y Keyify struct literals :GoKeyify
+nnoremap <Leader>y :GoKeyify<CR>
+
+"u Fill struct with defaults :GoFillStruct
+nnoremap <Leader>u :GoFillStruct<CR>
+
+"i List interfaces implemented :GoImplements
+autocmd FileType go nmap <leader>i <Plug>(go-implements)
+
+"I Stub interface methods :GoImpl [receiver] [interface]
+nnoremap <Leader>I :GoImpl<CR>
+
+"p c Possible callers of a function :GoCallers
+autocmd FileType go nmap <leader>pc <Plug>(go-callers)
+"p t Possible call targets for a type :GoCallees autocmd FileType go nmap <leader>pt <Plug>(go-callees)
+"p v Possible vars of a pointer :GoPointsTo autocmd FileType go nmap <leader>pv <Plug>(go-pointsto)
+"p e Possible error types of an error :GoWhicherrs
+"nnoremap <Leader>pe :GoWhicherrs<CR>
+""p c Channel peers :GoChannelPeers autocmd FileType go nmap <leader>pp <Plug>(go-channelpeers)
+"
+""a Alternate test/implementation :GoAlternate[!]
+"autocmd FileType go nmap <leader>a <Plug>(go-alternate-edit)
+"
+""s Describe type or identifier :GoDescribe
+"autocmd FileType go nmap <leader>s <Plug>(go-describe)
+"
+"d Show doc :GoDoc [word]
+autocmd FileType go nmap <leader>d <Plug>(go-doc)
+"D Browse doc :GoDocBrowser [word]
+autocmd FileType go nmap <leader>D <Plug>(go-doc-browser)
+
+""f Show all functions and types in file :GoDecls [file]
+"nnoremap <Leader>f :GoDecls<CR>
+""F Show all functions and types in directory :GoDeclsDir [dir]
+"nnoremap <Leader>F :GoDeclsDir<CR>
+"
+""g Show definition jump stack :GoDefStack [number]
+"autocmd FileType go nmap <leader>g <Plug>(go-def-stack)
+""G Clear definition jump stack :GoDefStackClear
+"autocmd FileType go nmap <leader>G <Plug>(go-def-stack-clear)
+"
+""h Show all identifiers referring to the object :GoReferrers
+"autocmd FileType go nmap <leader>h <Plug>(go-referrers)
+""H Toggle highlight same identifiers :GoSameIdsToggle
+"nnoremap <Leader>H :GoSameIdsToggle<CR>
+"
+""l List buffers
+"nnoremap <leader>l :ls<CR>:b<space>
+"
+""L List files
+"nnoremap <Leader>L :Explore<CR>
+"
+"w Close window split
+nnoremap <leader>x <C-w>c
+
+"c Toggle coverage :GoCoverageToggle[!] [options]
+autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
+"
+"C Browse coverage :GoCoverageBrowser[!] [options]
+nnoremap <Leader>C :GoCoverageBrowser<CR>
+"
+""v Show free variables in selection :GoFreevars
+"autocmd FileType go nmap <leader>v <Plug>(go-freevars)
+"
+"m Meta linter :GoMetaLinter [path]
+autocmd FileType go nmap <leader>M <Plug>(go-metalinter)
+"
+""<C-t> Back from definition :GoDefPop [count]
+"nnoremap <leader><TAB> :b#<CR>
+"
+"" disable search highlighting with two returns
+"nnoremap <CR> :nohlsearch<CR><CR>
+"
+"
+let g:gitgutter_preview_win_floating = 1
+set mouse=a
+set mousemodel=extend
+set completeopt=menuone,preview

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dnsutils
+  name: dnsutils
+spec:
+  containers:
+  - image: tutum/dnsutils
+    name: dnsutils
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

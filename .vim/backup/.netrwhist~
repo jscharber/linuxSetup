@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/home/jscharber/demo/src/worker/.templates/microservices/ga/datamgr/docs'
+let g:netrw_dirhist_2='/home/jscharber/demo/src/worker/.templates/microservices/ga/datamgr/manifests'
+let g:netrw_dirhist_3='/home/jscharber/demo/src/worker/.templates/microservices/ga/datamgr/dev/db'
+let g:netrw_dirhist_4='/home/jscharber/demo/src/worker/.templates/microservices/ga/datamgr/manifests/kubernetes'
+let g:netrw_dirhist_5='/home/jscharber/demo/src/worker/.templates/microservices/ga/datamgr/dev'
+let g:netrw_dirhist_6='/home/jscharber/demo/src/worker/.templates/microservices/ga/datamgr/docs'
+let g:netrw_dirhist_7='/home/jscharber/demo/src/worker/.templates/microservices/ga/datamgr/manifests'
+let g:netrw_dirhist_8='/home/jscharber/demo/src/worker/.templates/microservices/ga/datamgr/manifests/kubernetes'
